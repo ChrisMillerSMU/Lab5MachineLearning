@@ -18,7 +18,6 @@ from motor.motor_asyncio import AsyncIOMotorClient
 # Imports for handling data and ML model development & execution
 import turicreate as tc
 import numpy as np
-import json
 
 # Standard library imports
 from typing import List, Dict, Any, Union
@@ -126,20 +125,6 @@ async def predict_one(request: PredictionRequest) -> PredictionResponse:
 
     pred_label = clf[dsid].predict(fvals)
     return {"prediction": str(pred_label)}
-
-
-@app.get("/print_handlers/")
-async def print_handlers() -> str:
-    """
-    Prints out all of the routes for the viewer to see.
-    Intended for debugging purposes and transparency for the user running
-    this server.
-    """
-    routes_info: List[Dict[str, Union[str, List[str]]]] = [
-        {"path": route.path, "name": route.name, "methods": list(route.methods)}
-        for route in app.routes
-    ]
-    return json.dumps(routes_info, indent=2)
 
 
 @app.post("/upload_labeled_datapoint/")
@@ -295,4 +280,3 @@ if __name__ == "__main__":
     
     # Start uvicorn server
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
