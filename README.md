@@ -86,4 +86,4 @@ For running the Uvicorn/FastAPI server on `localhost` or IP address 127.0.0.1 on
 uvicorn main:app --port 8000
 ```
 
-To check FastAPI auto-generated Swagger docs for viewing a full summary of request handlers and Pydantic schemas, navigate to <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>.
+To check FastAPI auto-generated Swagger docs for viewing a full summary of request handlers and Pydantic schemas, navigate to <a href="http://127.0.0.1:8000/docs">http://127.0.0.1:8000/docs</a>.
