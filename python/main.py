@@ -131,9 +131,19 @@ async def print_handlers() -> str:
 @app.post("/upload_labeled_datapoint/")
 async def upload_labeled_datapoint(data: DataPoint) -> Dict[str, Any]:
     """
-    
-    """
+    Receives a labeled data point and stores it in the database.
+    The data point includes a feature vector, a label, and a dataset ID (dsid).
 
+    Parameters
+    ----------
+    data: DataPoint
+        The labeled data point to be stored, including its features, label, and dsid.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the ID of the inserted data point and a summary of the features.
+    """
     document: Dict[str, Any] = data.dict()
 
      # Ensure all features are float
@@ -152,17 +162,37 @@ async def upload_labeled_datapoint(data: DataPoint) -> Dict[str, Any]:
     }
 
 
-# Route to request a new dataset ID
 @app.get("/get_new_dataset_id/", response_model=NewDatasetIDResponse)
 async def get_new_dataset_id() -> NewDatasetIDResponse:
+    """
+    Retrieves a new, unique dataset ID that can be used for creating a new dataset.
+
+    Returns
+    -------
+    NewDatasetIDResponse
+        An object containing the new dataset ID.
+    """
     latest = await db.labeledinstances.find_one(sort=[("dsid", -1)])
     new_session_id = 1 if latest is None else float(latest['dsid']) + 1
     return {"dsid": new_session_id}
 
 
-# Route to update the model for a given dataset ID
 @app.get("/update_model_for_dataset_id/")
 async def update_model_for_dataset_id(dsid: int = 0):
+    """
+    Trains or updates a machine learning model for the specified dataset ID (dsid).
+    If successful, saves the model and returns the resubstitution accuracy.
+
+    Parameters
+    ----------
+    dsid: int
+        The dataset ID for which the model should be trained or updated.
+
+    Returns
+    -------
+    ResubAccuracyResponse
+        An object containing the resubstitution accuracy of the trained or updated model.
+    """
     features_labels = await get_features_and_labels_as_SFrame(dsid)
     if len(features_labels) > 0:
         model = tc.classifier.create(features_labels, target='target', verbose=0)
@@ -185,6 +215,19 @@ HELPER FUNCTIONS
 """
 
 def get_features_as_SFrame(vals: List[float]) -> tc.SFrame:
+    """
+    Converts a list of feature values into an SFrame that can be used for model prediction.
+
+    Parameters
+    ----------
+    vals: List[float]
+        A list of feature values.
+
+    Returns
+    -------
+    SFrame
+        An SFrame containing the feature values.
+    """
     tmp = [float(val) for val in vals]
     tmp = np.array(tmp).reshape((1, -1))
     data = {'sequence': tmp}
@@ -192,6 +235,20 @@ def get_features_as_SFrame(vals: List[float]) -> tc.SFrame:
 
 
 def get_features_and_labels_as_SFrame(dsid: int) -> tc.SFrame:
+    """
+    Retrieves feature vectors and labels from the database for a given dataset ID
+    and converts them into an SFrame suitable for model training.
+
+    Parameters
+    ----------
+    dsid: int
+        The dataset ID for which features and labels should be retrieved.
+
+    Returns
+    -------
+    SFrame
+        An SFrame containing the features and labels.
+    """
     # create feature vectors from database
     features: List[float] = []
     labels: List[str] = []
