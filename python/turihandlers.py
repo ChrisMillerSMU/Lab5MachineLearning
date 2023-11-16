@@ -111,19 +111,6 @@ class PredictOneFromDatasetId(BaseHandler):
             })
             return
 
-        # Check for model existence
-        if not dsid in self.clf:
-            # Attempt to load the model if it's not in memory
-            model_path = f'../models/turi_model_dsid{dsid}'
-            try:
-                self.clf[dsid] = tc.load_model(model_path)
-            except Exception as e:
-                # Handle model loading failure
-                self.write_json({
-                    "error": f"Could not load model for {dsid}: {str(e)}"
-                })
-                return
-
         # Only load the model with empty dictionary case
         print('Loading Model From file')
         self.clf[dsid] = tc.load_model('../models/turi_model_dsid%d'%(dsid))
