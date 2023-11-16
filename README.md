@@ -42,6 +42,10 @@ pip3 install jupyter
 pip3 install coremltools
 pip3 install turicreate
 pip3 install pymongo
+pip3 install asyncio
+pip3 install fastapi
+pip3 install uvicorn
+pip3 install motor
 ```
 
 ### **MongoDB Environment**
@@ -76,8 +80,10 @@ brew services stop mongodb-community@6.0
 
 ### **Run the Server**
 
-For running the Uvicorn/FastAPI server, the following command must be run:
+For running the Uvicorn/FastAPI server on `localhost` or IP address 127.0.0.1 on port 8000, the following command must be run:
 
 ```{bash}
-uvicorn module_name:app_instance --host 0.0.0.0 --port 8000
+uvicorn main:app --port 8000
 ```
+
+To check FastAPI auto-generated Swagger docs for viewing a full summary of request handlers and Pydantic schemas, navigate to <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>.

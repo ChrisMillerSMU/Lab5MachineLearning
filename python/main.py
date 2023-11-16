@@ -75,24 +75,38 @@ ROUTES
 @app.post("/predict_one/", response_model=PredictionResponse)
 async def predict_one(request: PredictionRequest) -> PredictionResponse:
     """
-    Use an existing machine learning model associated with the DSID
-    to make a prediction based on the feature data passed in.
+    Accepts a feature vector and a dataset ID (dsid), and uses the machine learning
+    model associated with the dsid to make a prediction. If the model for the
+    given dsid is not already loaded, it attempts to load it. If the model
+    cannot be loaded or does not exist, an HTTPException is raised.
 
     Parameters
     ----------
-    request: PredictionRequest
-        dsid: int
-            Dataset ID associated with machine learning model we use as our
-            predictor.
-        feature: List[float]
-            Feature data that will be passed into our model.
-    
+    request : PredictionRequest
+        A Pydantic model that includes a feature vector and a dataset ID (dsid).
+
     Returns
     -------
     PredictionResponse
-        prediction: str
-            The prediction label that the model predicts based on feature
-            data.
+        A Pydantic model that includes the prediction result as a string.
+        
+    Raises
+    ------
+    HTTPException
+        An error response with status code 500 if the model cannot be loaded,
+        or with status code 404 if no data can be found for the given dsid.
+
+    Example
+    -------
+    POST /predict_one/
+    {
+        "feature": [0.1, 0.2, 0.3],
+        "dsid": 123
+    }
+    Response:
+    {
+        "prediction": "Label1"
+    }
     """
     fvals = get_features_as_SFrame(request.feature)
     dsid = request.dsid
