@@ -73,3 +73,11 @@ When stopping a MongoDB server, run the following command:
 brew services stop mongodb-community@6.0
 ```
 
+
+### **Run the Server**
+
+For running the Uvicorn/FastAPI server, the following command must be run:
+
+```{bash}
+uvicorn module_name:app_instance --host 0.0.0.0 --port 8000
+```

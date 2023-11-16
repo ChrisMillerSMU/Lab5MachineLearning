@@ -273,4 +273,12 @@ MAIN METHOD
 """
 
 if __name__ == "__main__":
+    # Print existing route handlers
+    print("Registered route handlers:")
+    for route in app.routes:
+        methods = ", ".join(route.methods)
+        print(f"{methods} {route.path} -> {route.name}")
+    
+    # Start uvicorn server
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
