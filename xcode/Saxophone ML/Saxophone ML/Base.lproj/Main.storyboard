@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22154" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22130"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -23,9 +24,6 @@
                                     <segment title="Spectogram CNN"/>
                                     <segment title="XG Boost"/>
                                 </segments>
-                                <connections>
-                                    <action selector="modelSegmentedSwitch:" destination="BYZ-38-t0r" eventType="valueChanged" id="oKo-fK-shR"/>
-                                </connections>
                             </segmentedControl>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Training for" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RiJ-h2-NfF">
                                 <rect key="frame" x="105" y="150" width="183" height="45"/>
@@ -130,9 +128,12 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="modelSegmentedSwitch" destination="NH0-hf-6nM" id="Bsu-sP-nxT"/>
+                        <outlet property="evaluateModelsButton" destination="yjk-CK-jUR" id="oEq-Uv-hE7"/>
+                        <outlet property="modelSegmentedSwitch" destination="NH0-hf-6nM" id="hyF-8T-bVI"/>
                         <outlet property="nameDropdownButton" destination="tqD-Kh-krn" id="z9q-xf-V7M"/>
-                        <outlet property="predictionLabel" destination="8WZ-3D-wJH" id="1rG-Dy-UF6"/>
+                        <outlet property="predictionLabel" destination="8WZ-3D-wJH" id="nJ4-oC-lOy"/>
+                        <outlet property="testButton" destination="qBp-Kd-tiR" id="hGe-aZ-HPy"/>
+                        <outlet property="trainButton" destination="98B-4K-neY" id="IoA-31-jkR"/>
                         <outlet property="trainingLabel" destination="RiJ-h2-NfF" id="1YO-8b-uoI"/>
                     </connections>
                 </viewController>
