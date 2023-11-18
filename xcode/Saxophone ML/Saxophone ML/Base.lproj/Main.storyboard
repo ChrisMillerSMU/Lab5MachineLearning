@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22130"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="UIMenu" message="Requires Xcode 11 or later." minToolsVersion="11.0" requiredIntegratedClassName="UICommandDiff"/>
@@ -19,7 +20,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="NH0-hf-6nM">
-                                <rect key="frame" x="69" y="59" width="255" height="32"/>
+                                <rect key="frame" x="69" y="77" width="255" height="32"/>
                                 <segments>
                                     <segment title="Spectogram CNN"/>
                                     <segment title="XG Boost"/>
@@ -61,25 +62,6 @@
                                     <action selector="trainButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="92n-YJ-Sd1"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qBp-Kd-tiR">
-                                <rect key="frame" x="146" y="529.66666666666663" width="101.33333333333331" height="51.333333333333371"/>
-                                <color key="backgroundColor" systemColor="systemBlueColor"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain">
-                                    <attributedString key="attributedTitle">
-                                        <fragment content="TEST">
-                                            <attributes>
-                                                <font key="NSFont" size="32" name="AndaleMono"/>
-                                                <font key="NSOriginalFont" size="12" name="Helvetica"/>
-                                            </attributes>
-                                        </fragment>
-                                    </attributedString>
-                                </buttonConfiguration>
-                                <connections>
-                                    <action selector="testButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="lvp-uX-QbH"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="INSERT PREDICTION" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8WZ-3D-wJH">
                                 <rect key="frame" x="53" y="634" width="287" height="36"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
@@ -103,6 +85,17 @@
                                     <segue destination="gmK-a5-Y6g" kind="presentation" id="1IQ-lL-rdf"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qBp-Kd-tiR">
+                                <rect key="frame" x="126" y="515" width="140" height="100"/>
+                                <color key="tintColor" name="AccentColor"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="TEST">
+                                    <fontDescription key="titleFontDescription" name="AndaleMono" family="Andale Mono" pointSize="32"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="testButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="lvp-uX-QbH"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -121,7 +114,7 @@
                             <constraint firstItem="yjk-CK-jUR" firstAttribute="top" secondItem="8WZ-3D-wJH" secondAttribute="bottom" constant="96" id="VA4-Bx-YOX"/>
                             <constraint firstItem="98B-4K-neY" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="295" id="Wpw-a7-L19"/>
                             <constraint firstItem="98B-4K-neY" firstAttribute="centerX" secondItem="8WZ-3D-wJH" secondAttribute="centerX" id="rbT-ZH-PjB"/>
-                            <constraint firstItem="RiJ-h2-NfF" firstAttribute="top" secondItem="NH0-hf-6nM" secondAttribute="bottom" constant="60" id="slJ-1Q-Rnq"/>
+                            <constraint firstItem="RiJ-h2-NfF" firstAttribute="top" secondItem="NH0-hf-6nM" secondAttribute="bottom" constant="42" id="slJ-1Q-Rnq"/>
                             <constraint firstItem="8WZ-3D-wJH" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="53" id="uCA-n0-9UP"/>
                             <constraint firstItem="8WZ-3D-wJH" firstAttribute="top" secondItem="qBp-Kd-tiR" secondAttribute="bottom" constant="53" id="uOV-Zy-hEH"/>
                             <constraint firstAttribute="bottom" secondItem="8WZ-3D-wJH" secondAttribute="bottom" constant="182" id="voy-IO-8t4"/>
@@ -158,11 +151,11 @@
         </scene>
     </scenes>
     <resources>
+        <namedColor name="AccentColor">
+            <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
