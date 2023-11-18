@@ -24,6 +24,8 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var evaluateModelsButton: UIButton!
     
+    var modelType = "Spectogram CNN"
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,9 +50,38 @@ class ViewController: UIViewController {
     }
     
     @IBAction func trainButtonPressed(_ sender: UIButton) {
+            //Straight to backend
+        if let currentName = nameDropdownButton.titleLabel?.text {
+            print(currentName)
+        } else {
+            print("Button text is nil")
+        }
+        
+        if let currentModel = modelSegmentedSwitch.titleForSegment(at: modelSegmentedSwitch.selectedSegmentIndex) {
+            print(currentModel)
+        } else {
+            print("Button text is nil")
+        }
+        
+        //Use currentName and currentModel as params
+        
     }
     
     @IBAction func testButtonPressed(_ sender: UIButton) {
+        //Straight to backend
+        if let currentName = nameDropdownButton.titleLabel?.text {
+            print(currentName)
+        } else {
+            print("Button text is nil")
+        }
+    
+        if let currentModel = modelSegmentedSwitch.titleForSegment(at: modelSegmentedSwitch.selectedSegmentIndex) {
+            print(currentModel)
+        } else {
+            print("Button text is nil")
+        }
+    
+        //Use currentName and currentModel as params
     }
     
     func setupPopUpButton() {
