@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AAD3C0A32B096D16007BE37F /* TimerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD3C0A22B096D16007BE37F /* TimerModel.swift */; };
 		C07558752B057794001414B7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07558742B057794001414B7 /* AppDelegate.swift */; };
 		C07558772B057794001414B7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07558762B057794001414B7 /* SceneDelegate.swift */; };
 		C07558792B057794001414B7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07558782B057794001414B7 /* ViewController.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AAD3C0A22B096D16007BE37F /* TimerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerModel.swift; sourceTree = "<group>"; };
 		C07558712B057794001414B7 /* Saxophone ML.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Saxophone ML.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C07558742B057794001414B7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C07558762B057794001414B7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -56,6 +58,7 @@
 		C07558732B057794001414B7 /* Saxophone ML */ = {
 			isa = PBXGroup;
 			children = (
+				AAD3C0A22B096D16007BE37F /* TimerModel.swift */,
 				C07558742B057794001414B7 /* AppDelegate.swift */,
 				C07558762B057794001414B7 /* SceneDelegate.swift */,
 				C07558782B057794001414B7 /* ViewController.swift */,
@@ -139,6 +142,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C07558792B057794001414B7 /* ViewController.swift in Sources */,
+				AAD3C0A32B096D16007BE37F /* TimerModel.swift in Sources */,
 				C07558752B057794001414B7 /* AppDelegate.swift in Sources */,
 				C07558772B057794001414B7 /* SceneDelegate.swift in Sources */,
 			);
