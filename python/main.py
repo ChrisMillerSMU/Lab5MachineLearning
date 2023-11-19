@@ -26,6 +26,8 @@ from torch.utils.data import DataLoader, TensorDataset
 import torchaudio.transforms as T
 
 # Standard library imports
+import joblib  # To save and load Scikit-Learn models
+import os
 from typing import List, Tuple, Dict, Any
 
 """
@@ -77,11 +79,36 @@ class MelSpectrogramCNN(nn.Module):
 # Declare Mel Spectogram model
 spectogram_cnn = MelSpectrogramCNN()
 
-# `model_dictionary` is a global dictionary to store models
-model_dictionary: Dict[str, Any] = {
-    "Logistic Regression": logistic_model, 
-    "Mel's Spectogram CNN": spectogram_cnn, 
-}
+
+# Function to load machine learning models from the file system.
+def load_machine_learning_models():
+    """
+    Function to load machine learning models from the file system.
+    """
+    logistic_regression_path = "../ml_models/logistic_regression_model.pkl"
+    mel_spectrogram_cnn_path = "../ml_models/mel_spectrogram_cnn.pth"
+
+    # Load Logistic Regression model if exists, else create a new one
+    if os.path.exists(logistic_regression_path):
+        logistic_model = joblib.load(logistic_regression_path)
+    else:
+        logistic_model = LogisticRegression()
+        joblib.dump(logistic_model, logistic_regression_path)
+
+    # Load Mel Spectrogram CNN model if exists, else create a new one
+    if os.path.exists(mel_spectrogram_cnn_path):
+        spectogram_cnn = torch.load(mel_spectrogram_cnn_path)
+    else:
+        spectogram_cnn = MelSpectrogramCNN()
+        torch.save(spectogram_cnn.state_dict(), mel_spectrogram_cnn_path)
+
+    return {
+        "Logistic Regression": logistic_model, 
+        "Mel's Spectogram CNN": spectogram_cnn, 
+    }
+
+# `model_dictionary` is a global dictionary to store machine learning models
+model_dictionary: Dict[str, Any] = load_machine_learning_models() 
 
 """
 =========================================================
@@ -138,7 +165,7 @@ async def predict_one(request: PredictionRequest) -> PredictionResponse:
     -------
     POST /predict_one/
     {
-        "feature": <array of audio data>,
+        "feature": [0.0102, 0.2031, 0.923231, 0.0000123, ...],
         "model_type": "Logistic Regression"
     }
     Response:
@@ -257,7 +284,6 @@ async def upload_labeled_datapoint_and_update_model(data: DataPoint) -> Dict[str
 HELPER FUNCTIONS
 =========================================================
 """
-
 def convert_to_numpy_dataset(data_points: List[Dict]) -> Tuple[np.ndarray, np.ndarray]:
     """
     Convert the list of data points to NumPy arrays for features and labels.
