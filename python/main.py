@@ -337,58 +337,6 @@ async def retrain_pytorch_model(
     return model, accuracy
 
 
-def get_features_as_SFrame(vals: List[float]) -> tc.SFrame:
-    """
-    Converts a list of feature values into an SFrame that can be used for model prediction.
-
-    Parameters
-    ----------
-    vals: List[float]
-        A list of feature values.
-
-    Returns
-    -------
-    SFrame
-        An SFrame containing the feature values.
-    """
-    tmp = [float(val) for val in vals]
-    tmp = np.array(tmp).reshape((1, -1))
-    data = {'sequence': tmp}
-    return tc.SFrame(data=data)
-
-
-def get_features_and_labels_as_SFrame(dsid: int) -> tc.SFrame:
-    """
-    Retrieves feature vectors and labels from the database for a given dataset ID
-    and converts them into an SFrame suitable for model training.
-
-    Parameters
-    ----------
-    dsid: int
-        The dataset ID for which features and labels should be retrieved.
-
-    Returns
-    -------
-    SFrame
-        An SFrame containing the features and labels.
-    """
-    # create feature vectors from database
-    features: List[float] = []
-    labels: List[str] = []
-    for a in self.db.labeledinstances.find({"dsid": dsid}): 
-        features.append([float(val) for val in a["feature"]])
-        labels.append(a["label"])
-
-    # convert to dictionary for tc
-    data = {
-        "target": labels, 
-        "sequence": np.array(features),
-    }
-
-    # send back the SFrame of the data
-    return tc.SFrame(data=data)
-
-
 """
 =========================================================
 MAIN METHOD
@@ -396,11 +344,5 @@ MAIN METHOD
 """
 
 if __name__ == "__main__":
-    # Print existing route handlers
-    print("Registered route handlers:")
-    for route in app.routes:
-        methods = ", ".join(route.methods)
-        print(f"{methods} {route.path} -> {route.name}")
-    
     # Start uvicorn server
     uvicorn.run(app, host="0.0.0.0", port=8000)
