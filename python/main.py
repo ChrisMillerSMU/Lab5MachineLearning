@@ -11,24 +11,22 @@ IMPORTS
 
 # Imports for managing server access, routing, and database logic
 import uvicorn
-from fastapi import FastAPI, HTTPException, Body, status
+from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorClient
 
 # Imports for handling data and ML model development & execution
-import turicreate as tc
 import numpy as np
-
-# Machine learning packages
 from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 import torch
 import torch.nn as nn
 import torch.nn.functional as F 
-from torch.utils.data import Dataset, DataLoader, TensorDataset
+from torch.utils.data import DataLoader, TensorDataset
 import torchaudio.transforms as T
 
 # Standard library imports
-from typing import List, Tuple, Dict, Any, Union
+from typing import List, Tuple, Dict, Any
 
 """
 =========================================================
@@ -45,11 +43,17 @@ mongo_client: AsyncIOMotorClient = (
 )
 db = mongo_client.mydatabase
 
-# Create modes for machine learning
-model_types = ["Logistic Regression", "Mel's Spectogram CNN"]
-
 # Declare Logistic Regression model
 logistic_model = LogisticRegression()
+
+# Create a label encoder object
+label_encoder = LabelEncoder()
+one_hot_encoder = OneHotEncoder(sparse_output=False)
+
+# Fit the label encoder and one-hot encoder with the known labels
+known_labels = np.array(["Reece", "Ethan", "Rafe"])
+label_encoder.fit(known_labels)
+one_hot_encoder.fit(known_labels.reshape(-1, 1))
 
 # Specify Mel's Spectogram CNN Architecture
 class MelSpectrogramCNN(nn.Module):
@@ -87,7 +91,7 @@ PYDANTIC MODELS
 
 class PredictionRequest(BaseModel):
     raw_audio: List[float] 
-    model_type: str  # Model Types: "Spectogram CNN", "Mel's Spectogram CNN"
+    ml_model_type: str  # Model Types: "Spectogram CNN", "Mel's Spectogram CNN"
 
 class PredictionResponse(BaseModel):
     audio_prediction: str  # Predictions: "Reece", "Ethan", "Rafe"
@@ -95,7 +99,7 @@ class PredictionResponse(BaseModel):
 class DataPoint(BaseModel):
     raw_audio: List[float]
     audio_label: str  # "Reece", "Ethan", "Rafe"
-    model_type: str  # "Spectogram CNN", "Mel's Spectogram CNN"
+    ml_model_type: str  # "Spectogram CNN", "Mel's Spectogram CNN"
 
 class ResubAccuracyResponse(BaseModel):
     resub_accuracy: float
@@ -134,8 +138,8 @@ async def predict_one(request: PredictionRequest) -> PredictionResponse:
     -------
     POST /predict_one/
     {
-        "feature": [0.1, 0.2, 0.3, ...],
-        "model_type": 123
+        "feature": <array of audio data>,
+        "model_type": "Logistic Regression"
     }
     Response:
     {
@@ -145,7 +149,7 @@ async def predict_one(request: PredictionRequest) -> PredictionResponse:
     # Load in necessary variables and identify the model that will be used for the
     # prediction task
     feature_values = np.array(request.raw_audio)
-    model_type: str = request.model_type
+    model_type: str = request.ml_model_type
     if model_dictionary.get(model_type) is None:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -156,28 +160,33 @@ async def predict_one(request: PredictionRequest) -> PredictionResponse:
         # Specify logistic regression model
         model = model_dictionary[model_type]
 
-        # Prediict using the feature values
+        # Predict using the feature values and reverse encode the prediction
+        predicted_label_encoded = model.predict(feature_values.reshape(1,-1))
+        audio_prediction = label_encoder.inverse_transform(predicted_label_encoded)
+    
+        # Return the predicted audio
         return {
-            "audio_prediction": model.predict(feature_values.reshape(1,-1)) 
+            "audio_prediction": audio_prediction 
         }
+
     elif model_type == "Mel's Spectogram CNN":
         # Convert raw audio data to Mel Spectrogram
-        waveform = torch.tensor(request.raw_audio).float().view(1, -1)
-        mel_spectrogram_transform = T.MelSpectrogram(sample_rate=22050, n_mels=128)
+        waveform = torch.tensor(request.raw_audio).float().view(1,-1)
+        mel_spectrogram_transform = T.MelSpectrogram(sample_rate=44100, n_mels=128)
         mel_spectrogram = mel_spectrogram_transform(waveform)
 
         # Add a channel dimension and pass to the CNN
         mel_spectrogram = mel_spectrogram.view(1, 1, mel_spectrogram.size(1), mel_spectrogram.size(2))
         model = model_dictionary[model_type]
 
-        # Predict using the Mel Spectrogram
+        # Predict using the Mel Spectrogram and reverse encode the prediction
         prediction = model(mel_spectrogram)
-        predicted_label = prediction.argmax(dim=1)
+        predicted_label_index = prediction.argmax(dim=1)
+        audio_prediction = known_labels[predicted_label_index.item()]
 
-        # Map the label index to actual label name, assuming labels are stored in a list
-        labels = ["Reece", "Ethan", "Rafe"]
+        # Return the predicted audio
         return {
-            "audio_prediction": labels[predicted_label.item()]
+            "audio_prediction": audio_prediction 
         }
     
 
@@ -204,24 +213,27 @@ async def upload_labeled_datapoint_and_update_model(data: DataPoint) -> Dict[str
     insert_result = await db.labeledinstances.insert_one({
         "raw_audio": data.raw_audio,
         "audio_label": data.audio_label,
-        "model_type": data.model_type,
+        "model_type": data.ml_model_type,
     })
 
     # Retrieve all data points for this model_type from MongoDB
-    cursor = db.labeledinstances.find({"model_type": data.model_type})
+    cursor = db.labeledinstances.find({"model_type": data.ml_model_type})
     data_points = await cursor.to_list(length=None)
 
-    if data.model_type == "Logistic Regression": 
+    if data.ml_model_type == "Logistic Regression": 
         # Convert data to features and labels suitable for Logistic Regression
         features, labels = convert_to_numpy_dataset(data_points)
 
         # Train the model
-        accuracy = retrain_logistic_regression_model(features, labels)
+        model, accuracy = retrain_logistic_regression_model(features, labels)
+
+        # Update the model in the dictionary
+        model_dictionary[data.ml_model_type] = model
 
         # Return the accuracy of the retrained model
         return {"resub_accuracy": accuracy}
 
-    elif data.model_type == "Mel's Spectogram CNN":
+    elif data.ml_model_type == "Mel's Spectogram CNN":
         # Convert data to PyTorch dataset
         features, labels = convert_to_pytorch_dataset(data_points)
 
@@ -229,13 +241,15 @@ async def upload_labeled_datapoint_and_update_model(data: DataPoint) -> Dict[str
         model, accuracy = await retrain_pytorch_model(features, labels)
 
         # Update the model in the dictionary
-        model_dictionary[data.model_type] = model
+        model_dictionary[data.ml_model_type] = model
+
+        # Return the accuracy of the trained model
         return {"resub_accuracy": accuracy}
 
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"No model found for {data.model_type}"
+            detail=f"No model found for {data.ml_model_type}"
         )
 
 """
@@ -244,23 +258,27 @@ HELPER FUNCTIONS
 =========================================================
 """
 
-
 def convert_to_numpy_dataset(data_points: List[Dict]) -> Tuple[np.ndarray, np.ndarray]:
     """
     Convert the list of data points to NumPy arrays for features and labels.
     """
     # Extract FFT features for Logistic Regression
-    features_list = [np.fft.fft(np.array(dp['raw_audio'])).real for dp in data_points]
-    labels_list = [dp['audio_label'] for dp in data_points]
+    features_list = [np.fft.fft(np.array(dp["raw_audio"])).real for dp in data_points]
+    labels_list = [dp["audio_label"] for dp in data_points]
 
-    # Convert features and labels list to NumPy array
+    # Encode labels using label encoder
+    labels_encoded = label_encoder.transform(labels_list)
+
     features = np.array(features_list)
-    labels = np.array(labels_list)
+    labels = labels_encoded
 
     return features, labels
 
 
-def retrain_logistic_regression_model(features: np.ndarray, labels: np.ndarray) -> float:
+def retrain_logistic_regression_model(
+    features: np.ndarray,
+    labels: np.ndarray,
+) -> Tuple[LogisticRegression, float]:
     """
     Retrain the Logistic Regression model using the provided features and labels.
     """
@@ -269,16 +287,18 @@ def retrain_logistic_regression_model(features: np.ndarray, labels: np.ndarray) 
 
     # Evaluate accuracy
     accuracy = model.score(features, labels)
-    return accuracy
+    return model, accuracy
 
 
-async def convert_to_pytorch_dataset(data_points: List[Dict]) -> Tuple[torch.Tensor, torch.Tensor]:
+def convert_to_pytorch_dataset(
+    data_points: List[Dict],
+) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Convert the list of data points to PyTorch Tensors for features and labels.
     """
     # Extract Mel Spectrogram features for CNN
     features_list = []
-    mel_spectrogram_transform = T.MelSpectrogram(sample_rate=22050, n_mels=128)
+    mel_spectrogram_transform = T.MelSpectrogram(sample_rate=44100, n_mels=128)
     
     for dp in data_points:
         waveform = torch.tensor(dp['raw_audio']).float().view(1, -1)
@@ -288,8 +308,11 @@ async def convert_to_pytorch_dataset(data_points: List[Dict]) -> Tuple[torch.Ten
     
     labels_list = [dp['audio_label'] for dp in data_points]
 
+    # One-hot encode labels
+    labels_encoded = one_hot_encoder.transform(np.array(labels_list).reshape(-1, 1))
+
     features = torch.stack(features_list)
-    labels = torch.tensor(labels_list).long()  # Assuming labels are encoded as integers
+    labels = torch.tensor(labels_encoded).float()
 
     return features, labels
 
