@@ -229,9 +229,9 @@ class ViewController: UIViewController, URLSessionDelegate {
     }
     
     func stopRecord(button:UIButton) {
-        audio.pause()
+        self.audio.pause()
         //code to send off data
-        let data = audio.timeData
+        let data = self.audio.timeData
         let postType = button.titleLabel?.text
         var currentName = "Spectrogram CNN"
         //Straight to backend
@@ -247,10 +247,10 @@ class ViewController: UIViewController, URLSessionDelegate {
         // THIS IS WHERE WE SEND UP THE DATA
         
         if(postType == "TEST"){
-            self.sendPredictionPostRequest(model:currentModel)
+            self.sendPredictionPostRequest(model:currentModel, data:data)
         }
         else{
-            self.sendTrainingPostRequest(model:currentModel, label: currentName)
+            self.sendTrainingPostRequest(model:currentModel, label: currentName, data:data)
         }
         
         self.timer?.invalidate()
@@ -269,9 +269,7 @@ class ViewController: UIViewController, URLSessionDelegate {
         let ml_model_type: String
     }
     
-    func sendPredictionPostRequest(model: String) {
-        let data = audio.timeData
-        
+    func sendPredictionPostRequest(model: String, data: [Float]) {
         let baseURL = "\(SERVER_URL)/predict_one"
         guard let postUrl = URL(string: baseURL) else { return }
         
@@ -323,9 +321,7 @@ class ViewController: UIViewController, URLSessionDelegate {
         let ml_model_type: String
     }
     
-    func sendTrainingPostRequest(model: String, label: String) {
-        let data = audio.timeData
-
+    func sendTrainingPostRequest(model: String, label: String, data: [Float]) {
         let baseURL = "\(SERVER_URL)/upload_labeled_datapoint_and_update_model"
         guard let postUrl = URL(string: baseURL) else { return }
 
