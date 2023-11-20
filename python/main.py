@@ -139,6 +139,10 @@ class DataPoint(BaseModel):
 class ResubAccuracyResponse(BaseModel):
     resub_accuracy: str
 
+class ModelAccuraciesResponse(BaseModel):
+    spectrogram_cnn_accuracy: float
+    logistic_regression_accuracy: float
+
 """
 =========================================================
 ROUTES
@@ -231,23 +235,6 @@ async def predict_one(request: PredictionRequest) -> PredictionResponse:
         }
     
 
-@app.delete("/clear_database/")
-async def clear_database():
-    """
-    Deletes all data from the MongoDB collection used by this application.
-    """
-    # Assuming the collection is named 'labeledinstances'
-    delete_result = await db.labeledinstances.delete_many({})
-
-    if delete_result.acknowledged:
-        return {"detail": f"Deleted {delete_result.deleted_count} items."}
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to clear database."
-        )
-
-
 @app.post("/upload_labeled_datapoint_and_update_model/")
 async def upload_labeled_datapoint_and_update_model(data: DataPoint) -> Dict[str, Any]:
     """
@@ -310,11 +297,44 @@ async def upload_labeled_datapoint_and_update_model(data: DataPoint) -> Dict[str
             detail=f"No model found for {data.ml_model_type}"
         )
 
+
+@app.get("/model_accuracies/", response_model=ModelAccuraciesResponse)
+async def get_model_accuracies():
+    """
+    Returns the accuracies for both the Spectrogram CNN and Logistic Regression models.
+    """
+    # Retrieve actual accuracies
+    spectrogram_cnn_accuracy: str = await calculate_spectrogram_cnn_accuracy()
+    logistic_regression_accuracy: str = await calculate_logistic_regression_accuracy()
+
+    return {
+        "spectrogram_cnn_accuracy": spectrogram_cnn_accuracy,
+        "logistic_regression_accuracy": logistic_regression_accuracy
+    }
+
+
+@app.delete("/clear_database/")
+async def clear_database():
+    """
+    Deletes all data from the MongoDB collection used by this application.
+    """
+    # Assuming the collection is named 'labeledinstances'
+    delete_result = await db.labeledinstances.delete_many({})
+
+    if delete_result.acknowledged:
+        return {"detail": f"Deleted {delete_result.deleted_count} items."}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to clear database."
+        )
+
 """
 =========================================================
 HELPER FUNCTIONS
 =========================================================
 """
+
 def convert_to_numpy_dataset(data_points: List[Dict]) -> Tuple[np.ndarray, np.ndarray]:
     """
     Convert the list of data points to NumPy arrays for features and labels.
@@ -430,6 +450,57 @@ async def retrain_pytorch_model(
     # Calculate accuracy and return both model and accuracy
     accuracy = (correct / total) * 100
     return model, accuracy
+
+
+async def calculate_logistic_regression_accuracy() -> str:
+    """
+    Helper function to calculate accuracy for Logistic Regression.
+    """
+    cursor = db.labeledinstances.find({"model_type": "Logistic Regression"})
+    data_points = await cursor.to_list(length=None)
+    if len(data_points) == 0:
+        return "unknown"
+    features, labels = convert_to_numpy_dataset(data_points)
+    model = model_dictionary["Logistic Regression"]
+    accuracy = model.score(features, labels) * 100  # Accuracy as a percentage
+    return str(np.round(accuracy, 1))
+
+
+async def calculate_spectrogram_cnn_accuracy() -> str:
+    """
+    Helper function to calculate accuracy for Mel Spectrogram CNN
+    """
+    cursor = db.labeledinstances.find({"model_type": "Spectrogram CNN"})
+    data_points = await cursor.to_list(length=None)
+    if len(data_points) == 0:
+        return "unknown"
+    features, labels = convert_to_pytorch_dataset(data_points)
+    model = model_dictionary["Spectrogram CNN"]
+    
+    # Assuming you have a function that can evaluate the model and return accuracy
+    accuracy = await evaluate_cnn_model(model, features, labels)
+    return str(np.round(accuracy))
+
+
+async def evaluate_cnn_model(model, features, labels) -> float:
+    """
+    Function to evaluate CNN model and return accuracy.
+    """
+    # Define dataloader for evaluation
+    dataloader = DataLoader(TensorDataset(features, labels), batch_size=32, shuffle=False)
+    
+    # Evaluate the model
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for features, labels in dataloader:
+            outputs = model(features)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+    
+    accuracy = (correct / total) * 100
+    return accuracy
 
 
 """
