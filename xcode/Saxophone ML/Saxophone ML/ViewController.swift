@@ -14,13 +14,8 @@ import Foundation
 
 
 class ViewController: UIViewController, URLSessionDelegate {
-    
-    struct AudioConstants {
-        static let AUDIO_BUFFER_SIZE = 22050
-    }
-    
     // setup audio model
-    let audio = AudioModel(buffer_size: AudioConstants.AUDIO_BUFFER_SIZE)
+    let audio = AudioModel(buffer_size: 22050)
     
     // MARK: Class Properties
     lazy var session: URLSession = {
@@ -164,6 +159,7 @@ class ViewController: UIViewController, URLSessionDelegate {
     }
     
     @IBAction func trainButtonPressed(_ sender: UIButton) {
+        self.recordInput()
         self.testButton.isEnabled = false
         self.trainButton.isEnabled = false
         self.modelSegmentedSwitch.isEnabled = false
@@ -221,7 +217,6 @@ class ViewController: UIViewController, URLSessionDelegate {
         self.trainButton.titleLabel?.text = "Train"
         self.testButton.titleLabel?.text = "TEST"
         button.backgroundColor = .red
-        self.recordInput()
         self.timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
             self.stopRecord(button:button)
         }
@@ -234,6 +229,7 @@ class ViewController: UIViewController, URLSessionDelegate {
     }
     
     func stopRecord(button:UIButton) {
+        audio.pause()
         //code to send off data
         let data = audio.timeData
         let postType = button.titleLabel?.text
