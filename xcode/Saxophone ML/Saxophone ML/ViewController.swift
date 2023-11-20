@@ -230,11 +230,12 @@ class ViewController: UIViewController, URLSessionDelegate {
     func recordInput() {
         //code to record audio data
         // start storing to an array in our audio model
+        audio.startMicrophoneProcessing(withFps: 44100)
     }
     
     func stopRecord(button:UIButton) {
         //code to send off data
-        
+        let data = audio.timeData
         let postType = button.titleLabel?.text
         var currentName = "Spectrogram CNN"
         //Straight to backend
@@ -273,7 +274,7 @@ class ViewController: UIViewController, URLSessionDelegate {
     }
     
     func sendPredictionPostRequest(model: String) {
-        let data = [Float](repeating: 0.001, count: 22050) // Make sure this is [Float], not [Double]
+        let data = audio.timeData
         
         let baseURL = "\(SERVER_URL)/predict_one"
         guard let postUrl = URL(string: baseURL) else { return }
@@ -327,7 +328,7 @@ class ViewController: UIViewController, URLSessionDelegate {
     }
     
     func sendTrainingPostRequest(model: String, label: String) {
-        let data = [Float](repeating: 0.001, count: 22050) // Use [Float] to match the expected Pydantic model
+        let data = audio.timeData
 
         let baseURL = "\(SERVER_URL)/upload_labeled_datapoint_and_update_model"
         guard let postUrl = URL(string: baseURL) else { return }
