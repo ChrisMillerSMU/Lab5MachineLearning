@@ -57,27 +57,42 @@ known_labels = np.array(["Reece", "Ethan", "Rafe"])
 label_encoder.fit(known_labels)
 one_hot_encoder.fit(known_labels.reshape(-1, 1))
 
-# Specify Mel Spectogram CNN Architecture
+# Specify Mel Spectrogram CNN Architecture
 class MelSpectrogramCNN(nn.Module):
-    def __init__(self):
+    def __init__(self, n_mels, n_frames):
         super(MelSpectrogramCNN, self).__init__()
-        self.conv1 = nn.Conv2d(1, 64, kernel_size=3, stride=1, padding=1)
-        self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
-        self.conv2 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
-        # Additional layers can be added here
-        self.fc1 = nn.Linear(128 * 32 * 32, 1024)  # Adjust the input dimensions based on your data
-        self.fc2 = nn.Linear(1024, 3)  # Adjust the output dimensions based on the number of classes
+        self.conv1 = nn.Conv2d(1, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        self.pool = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=(1, 1))
+        
+        # Calculate the size of the layer before the fully connected layer
+        # flat_size = 64 * 33 * 12 = 25344
+        self.fc_input_size = 25344 
+        
+        self.fc1 = nn.Linear(self.fc_input_size, 500)
+        self.fc2 = nn.Linear(500, 3)  # 3 classes
+
+    def _get_conv_output(self, n_mels, n_frames):
+        # Temporary tensor to calculate the size
+        temp_input = torch.autograd.Variable(torch.rand(1, 1, n_mels, n_frames))
+        temp_output = self.pool(F.relu(self.conv1(temp_input)))
+        temp_output = self.pool(F.relu(self.conv2(temp_output)))
+        # Flatten the output to get the total number of features
+        return int(np.prod(temp_output.size()[1:]))
 
     def forward(self, x):
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
-        x = x.view(-1, 128 * 32 * 32)  # Flatten the tensor for the fully connected layer
+        # Print the size here to debug
+        print(x.size())
+        flat_size = x.size(1) * x.size(2) * x.size(3) # Correctly calculate the flattened size
+        x = x.view(-1, flat_size)  # Flatten the tensor
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
         return x
 
-# Declare Mel Spectogram model
-spectogram_cnn = MelSpectrogramCNN()
+# Declare Mel Spectogram models and necessary variables
+spectogram_cnn = MelSpectrogramCNN(n_mels=128, n_frames=40)
 
 # Function to load machine learning models from the file system.
 def load_machine_learning_models():
@@ -95,15 +110,16 @@ def load_machine_learning_models():
         joblib.dump(logistic_model, logistic_regression_path)
 
     # Load Mel Spectrogram CNN model if exists, else create a new one
+    spectogram_cnn = MelSpectrogramCNN(n_mels=128, n_frames=40)  # Create an instance of the model
     if os.path.exists(mel_spectrogram_cnn_path):
-        spectogram_cnn = torch.load(mel_spectrogram_cnn_path)
+        state_dict = torch.load(mel_spectrogram_cnn_path)
+        spectogram_cnn.load_state_dict(state_dict)  # Load the state dictionary into the model
     else:
-        spectogram_cnn = MelSpectrogramCNN()
-        torch.save(spectogram_cnn.state_dict(), mel_spectrogram_cnn_path)
+        torch.save(spectogram_cnn.state_dict(), mel_spectrogram_cnn_path)    
 
     return {
         "Logistic Regression": logistic_model, 
-        "Mel Spectogram CNN": spectogram_cnn, 
+        "Spectrogram CNN": spectogram_cnn, 
     }
 
 # `model_dictionary` is a global dictionary to store machine learning models
@@ -117,7 +133,7 @@ PYDANTIC MODELS
 
 class PredictionRequest(BaseModel):
     raw_audio: List[float] 
-    ml_model_type: str  # Model Types: "Logistic Regression", "Mel Spectogram CNN"
+    ml_model_type: str  # Model Types: "Logistic Regression", "Spectrogram CNN"
 
 class PredictionResponse(BaseModel):
     audio_prediction: str  # Predictions: "Reece", "Ethan", "Rafe"
@@ -125,10 +141,10 @@ class PredictionResponse(BaseModel):
 class DataPoint(BaseModel):
     raw_audio: List[float]
     audio_label: str  # "Reece", "Ethan", "Rafe"
-    ml_model_type: str  # "Logistic Regression", "Mel Spectogram CNN"
+    ml_model_type: str  # "Logistic Regression", "Spectrogram CNN"
 
 class ResubAccuracyResponse(BaseModel):
-    resub_accuracy: float
+    resub_accuracy: str
 
 """
 =========================================================
@@ -195,10 +211,16 @@ async def predict_one(request: PredictionRequest) -> PredictionResponse:
             "audio_prediction": audio_prediction 
         }
 
-    elif model_type == "Mel Spectogram CNN":
+    elif model_type == "Spectrogram CNN":
         # Convert raw audio data to Mel Spectrogram
         waveform = torch.tensor(request.raw_audio).float().view(1,-1)
-        mel_spectrogram_transform = T.MelSpectrogram(sample_rate=44100, n_mels=128)
+        mel_spectrogram_transform = T.MelSpectrogram(
+            sample_rate=44100,
+            n_fft=2048,  # This can be adjusted based on the desired time resolution
+            win_length=None,  # Window length, can be set to n_fft by default
+            hop_length=512,  # This controls the overlap between frames; adjust as needed
+            n_mels=128,  # Number of Mel filters
+        )
         mel_spectrogram = mel_spectrogram_transform(waveform)
 
         # Add a channel dimension and pass to the CNN
@@ -215,6 +237,23 @@ async def predict_one(request: PredictionRequest) -> PredictionResponse:
             "audio_prediction": audio_prediction 
         }
     
+
+@app.delete("/clear_database/")
+async def clear_database():
+    """
+    Deletes all data from the MongoDB collection used by this application.
+    """
+    # Assuming the collection is named 'labeledinstances'
+    delete_result = await db.labeledinstances.delete_many({})
+
+    if delete_result.acknowledged:
+        return {"detail": f"Deleted {delete_result.deleted_count} items."}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to clear database."
+        )
+
 
 @app.post("/upload_labeled_datapoint_and_update_model/")
 async def upload_labeled_datapoint_and_update_model(data: DataPoint) -> Dict[str, Any]:
@@ -257,9 +296,9 @@ async def upload_labeled_datapoint_and_update_model(data: DataPoint) -> Dict[str
         model_dictionary[data.ml_model_type] = model
 
         # Return the accuracy of the retrained model
-        return {"resub_accuracy": accuracy}
+        return {"resub_accuracy": str(np.round(accuracy, 1))}
 
-    elif data.ml_model_type == "Mel Spectogram CNN":
+    elif data.ml_model_type == "Spectrogram CNN":
         # Convert data to PyTorch dataset
         features, labels = convert_to_pytorch_dataset(data_points)
 
@@ -270,7 +309,7 @@ async def upload_labeled_datapoint_and_update_model(data: DataPoint) -> Dict[str
         model_dictionary[data.ml_model_type] = model
 
         # Return the accuracy of the trained model
-        return {"resub_accuracy": accuracy}
+        return {"resub_accuracy": str(np.round(accuracy, 1))}
 
     else:
         raise HTTPException(
@@ -310,8 +349,10 @@ def retrain_logistic_regression_model(
     model = model_dictionary["Logistic Regression"]
     model.fit(features, labels)
 
-    # Evaluate accuracy
-    accuracy = model.score(features, labels)
+    # Evaluate training accuracy
+    accuracy = 100 * model.score(features, labels)
+
+
     return model, accuracy
 
 
@@ -323,21 +364,31 @@ def convert_to_pytorch_dataset(
     """
     # Extract Mel Spectrogram features for CNN
     features_list = []
-    mel_spectrogram_transform = T.MelSpectrogram(sample_rate=44100, n_mels=128)
+    mel_spectrogram_transform = T.MelSpectrogram(
+        sample_rate=44100,
+        n_fft=2048,  # This can be adjusted based on the desired time resolution
+        win_length=None,  # Window length, can be set to n_fft by default
+        hop_length=512,  # This controls the overlap between frames; adjust as needed
+        n_mels=128,  # Number of Mel filters
+    ) 
     
     for dp in data_points:
-        waveform = torch.tensor(dp['raw_audio']).float().view(1, -1)
+        waveform = torch.tensor(dp["raw_audio"]).float().view(1, -1)
         mel_spectrogram = mel_spectrogram_transform(waveform)
         mel_spectrogram = mel_spectrogram.view(1, mel_spectrogram.size(1), mel_spectrogram.size(2))
         features_list.append(mel_spectrogram)
     
-    labels_list = [dp['audio_label'] for dp in data_points]
+    labels_list = [dp["audio_label"] for dp in data_points]
 
     # One-hot encode labels
     labels_encoded = one_hot_encoder.transform(np.array(labels_list).reshape(-1, 1))
+    labels_encoded_tensor = torch.tensor(labels_encoded)  # Convert NumPy array to PyTorch tensor
+
+    # Convert one-hot encoded labels to class indices for the CrossEntropyLoss
+    labels_indices = torch.argmax(labels_encoded_tensor, dim=1)
 
     features = torch.stack(features_list)
-    labels = torch.tensor(labels_encoded).float()
+    labels = labels_indices
 
     return features, labels
 
@@ -349,7 +400,7 @@ async def retrain_pytorch_model(
     """
     Retrain the specified model using the provided features and labels.
     """
-    model = model_dictionary["Mel Spectogram CNN"]
+    model = model_dictionary["Spectrogram CNN"]
 
     # Define a simple dataset and dataloader
     dataset = TensorDataset(features, labels)
@@ -373,15 +424,19 @@ async def retrain_pytorch_model(
 
     # Evaluate accuracy
     with torch.no_grad():
-        correct = 0
-        total = 0
+        correct: int = 0
+        total: int = 0
         for features, labels in dataloader:
+            # Make predictions with batch of features
             outputs = model(features)
             _, predicted = torch.max(outputs.data, 1)
+
+            # Increment total correct and total logged in batch accordingly
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-    accuracy = correct / total
+    # Calculate accuracy and return both model and accuracy
+    accuracy = (correct / total) * 100
     return model, accuracy
 
 
