@@ -57,7 +57,7 @@ known_labels = np.array(["Reece", "Ethan", "Rafe"])
 label_encoder.fit(known_labels)
 one_hot_encoder.fit(known_labels.reshape(-1, 1))
 
-# Specify Mel's Spectogram CNN Architecture
+# Specify Mel Spectogram CNN Architecture
 class MelSpectrogramCNN(nn.Module):
     def __init__(self):
         super(MelSpectrogramCNN, self).__init__()
@@ -78,7 +78,6 @@ class MelSpectrogramCNN(nn.Module):
 
 # Declare Mel Spectogram model
 spectogram_cnn = MelSpectrogramCNN()
-
 
 # Function to load machine learning models from the file system.
 def load_machine_learning_models():
@@ -104,7 +103,7 @@ def load_machine_learning_models():
 
     return {
         "Logistic Regression": logistic_model, 
-        "Mel's Spectogram CNN": spectogram_cnn, 
+        "Mel Spectogram CNN": spectogram_cnn, 
     }
 
 # `model_dictionary` is a global dictionary to store machine learning models
@@ -118,7 +117,7 @@ PYDANTIC MODELS
 
 class PredictionRequest(BaseModel):
     raw_audio: List[float] 
-    ml_model_type: str  # Model Types: "Spectogram CNN", "Mel's Spectogram CNN"
+    ml_model_type: str  # Model Types: "Logistic Regression", "Mel Spectogram CNN"
 
 class PredictionResponse(BaseModel):
     audio_prediction: str  # Predictions: "Reece", "Ethan", "Rafe"
@@ -126,7 +125,7 @@ class PredictionResponse(BaseModel):
 class DataPoint(BaseModel):
     raw_audio: List[float]
     audio_label: str  # "Reece", "Ethan", "Rafe"
-    ml_model_type: str  # "Spectogram CNN", "Mel's Spectogram CNN"
+    ml_model_type: str  # "Logistic Regression", "Mel Spectogram CNN"
 
 class ResubAccuracyResponse(BaseModel):
     resub_accuracy: float
@@ -196,7 +195,7 @@ async def predict_one(request: PredictionRequest) -> PredictionResponse:
             "audio_prediction": audio_prediction 
         }
 
-    elif model_type == "Mel's Spectogram CNN":
+    elif model_type == "Mel Spectogram CNN":
         # Convert raw audio data to Mel Spectrogram
         waveform = torch.tensor(request.raw_audio).float().view(1,-1)
         mel_spectrogram_transform = T.MelSpectrogram(sample_rate=44100, n_mels=128)
@@ -260,7 +259,7 @@ async def upload_labeled_datapoint_and_update_model(data: DataPoint) -> Dict[str
         # Return the accuracy of the retrained model
         return {"resub_accuracy": accuracy}
 
-    elif data.ml_model_type == "Mel's Spectogram CNN":
+    elif data.ml_model_type == "Mel Spectogram CNN":
         # Convert data to PyTorch dataset
         features, labels = convert_to_pytorch_dataset(data_points)
 
@@ -350,7 +349,7 @@ async def retrain_pytorch_model(
     """
     Retrain the specified model using the provided features and labels.
     """
-    model = model_dictionary["Mel's Spectogram CNN"]
+    model = model_dictionary["Mel Spectogram CNN"]
 
     # Define a simple dataset and dataloader
     dataset = TensorDataset(features, labels)
