@@ -8,43 +8,45 @@
 import UIKit
 
 class EvaluationModel: NSObject {
-    private var modelString = "Spectrogram CNN"
-    private var spectogramAccuracyString = "--.-"
-    private var logisticAccuracyString = "--.-"
-    private var labelString = "Training accuracy for Spectogram CNN is: --.-%"
+    private var modelString: String = "Spectrogram CNN"
+    private var spectogramAccuracy: String = "--.-"
+    private var logisticAccuracy: String = "--.-"
+    private var labelString: String = "Training accuracy for\nSpectogram CNN is:\n--.-%"
     
-    func setModel(model:String) {
-        modelString = model
+    func setModel(modelType: String) {
+        self.modelString = modelType
     }
     
     func setAccuracy(accuracy:String, myCase:String) {
         switch(myCase){
         case "Spectrogram CNN":
-            self.spectogramAccuracyString = accuracy + "%"
+            self.spectogramAccuracy = accuracy
             break
         case "Logistic Regression":
-            self.logisticAccuracyString = accuracy + "%"
+            self.logisticAccuracy = accuracy
             break
         default:
             break
         }
     }
     
-    func updateLabelString() -> String {
-        switch(self.modelString){
+    func updateLabelString() {
+        switch (self.modelString) {
         case "Spectrogram CNN":
-            labelString = "Training accuracy for \(self.modelString) is: \(self.spectogramAccuracyString)"
+            self.labelString = "Training accuracy for\n\(self.modelString) is:\n\(self.spectogramAccuracy)%"
         case "Logistic Regression":
-            labelString = "Training accuracy for \(self.modelString) is: \(self.logisticAccuracyString)"
+            self.labelString = "Training accuracy for\n\(self.modelString) is:\n\(self.logisticAccuracy)%"
         default:
-            break
+            self.labelString = "Training accuracy unavailable"
         }
-        
-        return labelString
-        
     }
     
     func getModel() -> String{
-        return modelString
+        return self.modelString
     }
+    
+    func getLabelString() -> String {
+        return self.labelString
+    }
+    
 }

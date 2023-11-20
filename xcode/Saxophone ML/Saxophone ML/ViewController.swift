@@ -5,35 +5,105 @@
 //  Created by Reece Iriye on 11/15/23.
 //
 
-let SERVER_URL = "http://10.8.159.212:8000"
+// HERE IS THE SERVER URL FOR MY SERVER
+let SERVER_URL = "http://10.9.170.145:8000"
+
 
 import UIKit
+import Foundation
+
 
 class ViewController: UIViewController, URLSessionDelegate {
-    
-    struct PredictionRequest: Codable {
-        let raw_audio: [Float]
-        let ml_model_type: String
-    }
-    
-    struct TrainingRequest: Codable {
-        let raw_audio: [Float]
-        let audio_label: String
-        let ml_model_type: String
-    }
     
     // MARK: Class Properties
     lazy var session: URLSession = {
         let sessionConfig = URLSessionConfiguration.ephemeral
         
-        sessionConfig.timeoutIntervalForRequest = 5.0
-        sessionConfig.timeoutIntervalForResource = 8.0
+        sessionConfig.timeoutIntervalForRequest = 6.0
+        sessionConfig.timeoutIntervalForResource = 20.0
         sessionConfig.httpMaximumConnectionsPerHost = 1
         
-        return URLSession(configuration: sessionConfig,
+        return URLSession(
+            configuration: sessionConfig,
             delegate: self,
-            delegateQueue:self.operationQueue)
+            delegateQueue: self.operationQueue
+        )
     }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // Do any additional setup after loading the view.
+        self.setupPopUpButton()
+        
+        // Fetch model accuracies
+        self.getModelAccuracies()
+    }
+    
+    // MARK: Model Accuracy Request
+    
+    /// This struct contains both the Python return types representing Spectrogram CNN and Logistic
+    /// Regression accuracy
+    struct ModelAccuraciesResponse: Codable {
+        var spectrogram_cnn_accuracy: String
+        var logistic_regression_accuracy: String
+    }
+    
+    func getModelAccuracies() {
+        // Indicate GET request route in FastAPI server for obtaining current model accuracies
+        guard let url = URL(string: "\(SERVER_URL)/model_accuracies/") else { return }
+
+        // Start up the URL Session task and run GET request code if session does not yield error
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            guard let self = self else { return }
+            
+            // Error handling for model accuracy fetching
+            if let error = error {
+                print("Error fetching model accuracies: \(error)")
+                return
+            }
+            
+            // If no data is retrieved, don't run the rest of the code
+            guard let data = data else {
+                print("No data received for model accuracies")
+                return
+            }
+            
+            // Try-catch block for fetching accuracies and updating the labels accordingly
+            do {
+                // Decode the JSON into Swift struct
+                let accuracies = try JSONDecoder().decode(ModelAccuraciesResponse.self, from: data)
+                
+                // Update Spectrogram CNN and Logistic Regressiion accuracy
+                let spectrogramCnnAccuracy: String = accuracies.spectrogram_cnn_accuracy
+                let logisticAccuracy: String = accuracies.logistic_regression_accuracy
+                
+                // Get the accuracies set for each model
+                self.evaluationModel.setAccuracy(
+                    accuracy: spectrogramCnnAccuracy,
+                    myCase: "Spectrogram CNN"
+                )
+                self.evaluationModel.setAccuracy(
+                    accuracy: logisticAccuracy,
+                    myCase: "Logistic Regression"
+                )
+                
+                // Update the label to display the correct accuracy based on the selected model
+                self.evaluationModel.updateLabelString()
+                
+                // Update the evaluation model and load up text on the main queue
+                DispatchQueue.main.async {
+                    self.accuracyLabel.text = self.evaluationModel.getLabelString()
+                }
+                
+            } catch {
+                print("Error decoding model accuracies: \(error)")
+            }
+        }
+        task.resume()
+    }
+
+    
     
     let operationQueue = OperationQueue()
     
@@ -62,22 +132,25 @@ class ViewController: UIViewController, URLSessionDelegate {
     }()
     
     // Model to retain stopwatch time for test button
-    lazy var evaluationScores: EvaluationModel = {
+    lazy var evaluationModel: EvaluationModel = {
         return EvaluationModel()
     }()
     
     var timer: Timer?
     
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        setupPopUpButton()
-    }
-    
     @IBAction func switchNames(_ sender: UISegmentedControl) {
-        if let currentModel = modelSegmentedSwitch.titleForSegment(at: modelSegmentedSwitch.selectedSegmentIndex) {
-            evaluationScores.setModel(model: currentModel)
+        // Each time the segmented control is invoked, updated the display label to showcase
+        // the accuracy for the current machine learning model selected
+        if let currentModel = self.modelSegmentedSwitch.titleForSegment(at: self.modelSegmentedSwitch.selectedSegmentIndex) {
+            // Switch the mode of the model
+            self.evaluationModel.setModel(modelType: currentModel)
+            
+            // Update the label string accordingly on the main queue
+            self.evaluationModel.updateLabelString()
+            DispatchQueue.main.async {
+                self.accuracyLabel.text = self.evaluationModel.getLabelString()
+            }
+            
         } else {
             print("Button text is nil")
         }
@@ -103,13 +176,13 @@ class ViewController: UIViewController, URLSessionDelegate {
         self.trainButton.isEnabled = false
         self.modelSegmentedSwitch.isEnabled = false
         self.nameDropdownButton.isEnabled = false
-        if let currentName = nameDropdownButton.titleLabel?.text {
+        if let currentName = self.nameDropdownButton.titleLabel?.text {
             print(currentName)
         } else {
             print("Button text is nil")
         }
     
-        if let currentModel = modelSegmentedSwitch.titleForSegment(at: modelSegmentedSwitch.selectedSegmentIndex) {
+        if let currentModel = self.modelSegmentedSwitch.titleForSegment(at: self.modelSegmentedSwitch.selectedSegmentIndex) {
             print(currentModel)
         } else {
             print("Button text is nil")
@@ -141,7 +214,7 @@ class ViewController: UIViewController, URLSessionDelegate {
         self.trainButton.titleLabel?.text = "Train"
         self.testButton.titleLabel?.text = "TEST"
         button.backgroundColor = .red
-        recordInput()
+        self.recordInput()
         self.timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
             self.stopRecord(button:button)
         }
@@ -155,25 +228,25 @@ class ViewController: UIViewController, URLSessionDelegate {
     func stopRecord(button:UIButton) {
         //code to send off data
         
-        var postType = button.titleLabel?.text
-        var currentName = ""
+        let postType = button.titleLabel?.text
+        var currentName = "Spectrogram CNN"
         //Straight to backend
-        if let name = nameDropdownButton.titleLabel?.text {
+        if let name = self.nameDropdownButton.titleLabel?.text {
             currentName = name
         } else {
             print("Button text is nil")
         }
         
         
-        var currentModel = evaluationScores.getModel()
+        let currentModel = self.evaluationModel.getModel()
         
         // THIS IS WHERE WE SEND UP THE DATA
         
         if(postType == "TEST"){
-            sendPredictionPostRequest(model:currentModel)
+            self.sendPredictionPostRequest(model:currentModel)
         }
         else{
-            sendTrainingPostRequest(model:currentModel, label: currentName)
+            self.sendTrainingPostRequest(model:currentModel, label: currentName)
         }
         
         self.timer?.invalidate()
@@ -185,8 +258,15 @@ class ViewController: UIViewController, URLSessionDelegate {
         button.backgroundColor = nil
     }
     
+    // MARK: Request Handling Structs and Functions
+    
+    struct PredictionRequest: Codable {
+        let raw_audio: [Float]
+        let ml_model_type: String
+    }
+    
     func sendPredictionPostRequest(model: String) {
-        let data = [Float](repeating: 0.001, count: 100) // Make sure this is [Float], not [Double]
+        let data = [Float](repeating: 0.001, count: 22050) // Make sure this is [Float], not [Double]
         
         let baseURL = "\(SERVER_URL)/predict_one"
         guard let postUrl = URL(string: baseURL) else { return }
@@ -233,8 +313,14 @@ class ViewController: UIViewController, URLSessionDelegate {
         }
     }
     
+    struct TrainingRequest: Codable {
+        let raw_audio: [Float]
+        let audio_label: String
+        let ml_model_type: String
+    }
+    
     func sendTrainingPostRequest(model: String, label: String) {
-        let data = [Float](repeating: 0.001, count: 100) // Use [Float] to match the expected Pydantic model
+        let data = [Float](repeating: 0.001, count: 22050) // Use [Float] to match the expected Pydantic model
 
         let baseURL = "\(SERVER_URL)/upload_labeled_datapoint_and_update_model"
         guard let postUrl = URL(string: baseURL) else { return }
@@ -283,16 +369,16 @@ class ViewController: UIViewController, URLSessionDelegate {
     
     func setupPopUpButton() {
         let popUpButtonClosure = { (action: UIAction) in
-            print("Pop-up action")
+            print("Pop-Up Action")
         }
                 
-        nameDropdownButton.menu = UIMenu(children: [
+        self.nameDropdownButton.menu = UIMenu(children: [
             UIAction(title: "Reece", handler: popUpButtonClosure),
             UIAction(title: "Ethan", handler: popUpButtonClosure),
             UIAction(title: "Rafe", handler: popUpButtonClosure),
             UIAction(title: "Chris", handler: popUpButtonClosure)
         ])
-        nameDropdownButton.showsMenuAsPrimaryAction = true
+        self.nameDropdownButton.showsMenuAsPrimaryAction = true
     }
     
     //MARK: JSON Conversion Functions
