@@ -1,10 +1,3 @@
-//
-//  EvaluationModel.swift
-//  Saxophone ML
-//
-//  Created by Ethan Haugen on 11/19/23.
-//
-
 import UIKit
 
 class EvaluationModel: NSObject {
@@ -48,5 +41,4 @@ class EvaluationModel: NSObject {
     func getLabelString() -> String {
         return self.labelString
     }
-    
 }
