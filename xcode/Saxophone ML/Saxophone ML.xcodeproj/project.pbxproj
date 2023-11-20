@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		AAD3C0A32B096D16007BE37F /* TimerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD3C0A22B096D16007BE37F /* TimerModel.swift */; };
-		AAD3C0A72B0AE049007BE37F /* EvaluationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD3C0A62B0AE049007BE37F /* EvaluationViewController.swift */; };
 		AAD3C0A92B0AE588007BE37F /* EvaluationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD3C0A82B0AE588007BE37F /* EvaluationModel.swift */; };
 		C07558752B057794001414B7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07558742B057794001414B7 /* AppDelegate.swift */; };
 		C07558772B057794001414B7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07558762B057794001414B7 /* SceneDelegate.swift */; };
@@ -20,7 +19,6 @@
 
 /* Begin PBXFileReference section */
 		AAD3C0A22B096D16007BE37F /* TimerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerModel.swift; sourceTree = "<group>"; };
-		AAD3C0A62B0AE049007BE37F /* EvaluationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EvaluationViewController.swift; path = ../EvaluationViewController.swift; sourceTree = "<group>"; };
 		AAD3C0A82B0AE588007BE37F /* EvaluationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluationModel.swift; sourceTree = "<group>"; };
 		C07558712B057794001414B7 /* Saxophone ML.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Saxophone ML.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C07558742B057794001414B7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -63,7 +61,6 @@
 			isa = PBXGroup;
 			children = (
 				AAD3C0A82B0AE588007BE37F /* EvaluationModel.swift */,
-				AAD3C0A62B0AE049007BE37F /* EvaluationViewController.swift */,
 				AAD3C0A22B096D16007BE37F /* TimerModel.swift */,
 				C07558742B057794001414B7 /* AppDelegate.swift */,
 				C07558762B057794001414B7 /* SceneDelegate.swift */,
@@ -149,7 +146,6 @@
 			files = (
 				C07558792B057794001414B7 /* ViewController.swift in Sources */,
 				AAD3C0A32B096D16007BE37F /* TimerModel.swift in Sources */,
-				AAD3C0A72B0AE049007BE37F /* EvaluationViewController.swift in Sources */,
 				C07558752B057794001414B7 /* AppDelegate.swift in Sources */,
 				C07558772B057794001414B7 /* SceneDelegate.swift in Sources */,
 				AAD3C0A92B0AE588007BE37F /* EvaluationModel.swift in Sources */,
