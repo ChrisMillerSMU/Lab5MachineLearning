@@ -17,12 +17,12 @@ class EvaluationModel: NSObject {
         modelString = model
     }
     
-    func setAccuracy(accuracy:String, myCase:Int) {
+    func setAccuracy(accuracy:String, myCase:String) {
         switch(myCase){
-        case 0:
+        case "Spectrogram CNN":
             self.spectogramAccuracyString = accuracy + "%"
             break
-        case 1:
+        case "Logistic Regression":
             self.logisticAccuracyString = accuracy + "%"
             break
         default:
@@ -30,7 +30,7 @@ class EvaluationModel: NSObject {
         }
     }
     
-    func updateLabelString() {
+    func updateLabelString() -> String {
         switch(self.modelString){
         case "Spectrogram CNN":
             labelString = "Training accuracy for \(self.modelString) is: \(self.spectogramAccuracyString)"
@@ -42,5 +42,9 @@ class EvaluationModel: NSObject {
         
         return labelString
         
+    }
+    
+    func getModel() -> String{
+        return modelString
     }
 }

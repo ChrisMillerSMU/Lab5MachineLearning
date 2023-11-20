@@ -19,15 +19,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="NH0-hf-6nM">
-                                <rect key="frame" x="69" y="77" width="255" height="32"/>
-                                <segments>
-                                    <segment title="Spectogram CNN"/>
-                                    <segment title="XG Boost"/>
-                                </segments>
-                            </segmentedControl>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Training for" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RiJ-h2-NfF">
-                                <rect key="frame" x="105" y="150" width="183" height="45"/>
+                                <rect key="frame" x="105" y="134" width="183" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="zea-42-hdM"/>
                                 </constraints>
@@ -36,7 +29,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" changesSelectionAsPrimaryAction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tqD-Kh-krn">
-                                <rect key="frame" x="155.66666666666666" y="215" width="82" height="48"/>
+                                <rect key="frame" x="155.66666666666666" y="187" width="82" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <menu key="menu" id="rgq-8d-wq5">
                                     <children>
@@ -52,7 +45,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="98B-4K-neY">
-                                <rect key="frame" x="141" y="295" width="111" height="47"/>
+                                <rect key="frame" x="141" y="258" width="111" height="47"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="47" id="Gaa-Bs-3YC"/>
                                 </constraints>
@@ -63,30 +56,13 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="INSERT PREDICTION" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8WZ-3D-wJH">
-                                <rect key="frame" x="53" y="634" width="287" height="36"/>
+                                <rect key="frame" x="53" y="666" width="287" height="36"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yjk-CK-jUR">
-                                <rect key="frame" x="110.66666666666669" y="766" width="172" height="37"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain">
-                                    <attributedString key="attributedTitle">
-                                        <fragment content="Evaluate Models">
-                                            <attributes>
-                                                <font key="NSFont" size="20" name="Helvetica"/>
-                                                <font key="NSOriginalFont" size="12" name="Helvetica"/>
-                                            </attributes>
-                                        </fragment>
-                                    </attributedString>
-                                </buttonConfiguration>
-                                <connections>
-                                    <segue destination="gmK-a5-Y6g" kind="presentation" id="1IQ-lL-rdf"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qBp-Kd-tiR">
-                                <rect key="frame" x="126" y="515" width="140" height="100"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qBp-Kd-tiR">
+                                <rect key="frame" x="146" y="581.66666666666663" width="101.33333333333331" height="51.333333333333371"/>
                                 <color key="tintColor" name="AccentColor"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="TEST">
@@ -96,6 +72,22 @@
                                     <action selector="testButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="lvp-uX-QbH"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Training accuracy for Spectrogram CNN is: --.-%" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vLl-4a-eJB">
+                                <rect key="frame" x="16" y="313" width="361" height="113"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="113" id="U2U-pR-EZd"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="NH0-hf-6nM">
+                                <rect key="frame" x="69" y="71" width="255" height="32"/>
+                                <segments>
+                                    <segment title="Spectogram CNN"/>
+                                    <segment title="XG Boost"/>
+                                </segments>
+                            </segmentedControl>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -105,23 +97,24 @@
                             <constraint firstItem="98B-4K-neY" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="141" id="7t6-FN-vLa"/>
                             <constraint firstItem="98B-4K-neY" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="9ds-Tu-hc0"/>
                             <constraint firstItem="98B-4K-neY" firstAttribute="centerX" secondItem="RiJ-h2-NfF" secondAttribute="centerX" id="Ddx-l8-3pq"/>
-                            <constraint firstItem="98B-4K-neY" firstAttribute="top" secondItem="tqD-Kh-krn" secondAttribute="bottom" constant="32" id="DiM-IJ-yUf"/>
+                            <constraint firstItem="98B-4K-neY" firstAttribute="top" secondItem="tqD-Kh-krn" secondAttribute="bottom" constant="23" id="DiM-IJ-yUf"/>
                             <constraint firstItem="RiJ-h2-NfF" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="105" id="ECz-2y-aNk"/>
-                            <constraint firstItem="98B-4K-neY" firstAttribute="centerX" secondItem="yjk-CK-jUR" secondAttribute="centerX" id="Ewb-wq-c0G"/>
-                            <constraint firstItem="tqD-Kh-krn" firstAttribute="top" secondItem="RiJ-h2-NfF" secondAttribute="bottom" constant="20" id="RWh-82-G5f"/>
+                            <constraint firstItem="tqD-Kh-krn" firstAttribute="top" secondItem="RiJ-h2-NfF" secondAttribute="bottom" constant="8" id="RWh-82-G5f"/>
                             <constraint firstItem="98B-4K-neY" firstAttribute="centerX" secondItem="NH0-hf-6nM" secondAttribute="centerX" id="S7m-QL-cLr"/>
                             <constraint firstItem="98B-4K-neY" firstAttribute="centerX" secondItem="tqD-Kh-krn" secondAttribute="centerX" id="V9g-Ss-dLA"/>
-                            <constraint firstItem="yjk-CK-jUR" firstAttribute="top" secondItem="8WZ-3D-wJH" secondAttribute="bottom" constant="96" id="VA4-Bx-YOX"/>
-                            <constraint firstItem="98B-4K-neY" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="295" id="Wpw-a7-L19"/>
+                            <constraint firstItem="98B-4K-neY" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="258" id="Wpw-a7-L19"/>
+                            <constraint firstItem="vLl-4a-eJB" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Xdc-gh-3gp"/>
                             <constraint firstItem="98B-4K-neY" firstAttribute="centerX" secondItem="8WZ-3D-wJH" secondAttribute="centerX" id="rbT-ZH-PjB"/>
-                            <constraint firstItem="RiJ-h2-NfF" firstAttribute="top" secondItem="NH0-hf-6nM" secondAttribute="bottom" constant="42" id="slJ-1Q-Rnq"/>
+                            <constraint firstItem="vLl-4a-eJB" firstAttribute="top" secondItem="98B-4K-neY" secondAttribute="bottom" constant="8" id="rrT-cx-TKN"/>
+                            <constraint firstItem="RiJ-h2-NfF" firstAttribute="top" secondItem="NH0-hf-6nM" secondAttribute="bottom" constant="32" id="slJ-1Q-Rnq"/>
                             <constraint firstItem="8WZ-3D-wJH" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="53" id="uCA-n0-9UP"/>
-                            <constraint firstItem="8WZ-3D-wJH" firstAttribute="top" secondItem="qBp-Kd-tiR" secondAttribute="bottom" constant="53" id="uOV-Zy-hEH"/>
-                            <constraint firstAttribute="bottom" secondItem="8WZ-3D-wJH" secondAttribute="bottom" constant="182" id="voy-IO-8t4"/>
+                            <constraint firstItem="8WZ-3D-wJH" firstAttribute="top" secondItem="qBp-Kd-tiR" secondAttribute="bottom" constant="33" id="uOV-Zy-hEH"/>
+                            <constraint firstAttribute="bottom" secondItem="8WZ-3D-wJH" secondAttribute="bottom" constant="150" id="voy-IO-8t4"/>
+                            <constraint firstItem="vLl-4a-eJB" firstAttribute="centerX" secondItem="98B-4K-neY" secondAttribute="centerX" id="zdb-LG-567"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="evaluateModelsButton" destination="yjk-CK-jUR" id="oEq-Uv-hE7"/>
+                        <outlet property="accuracyLabel" destination="vLl-4a-eJB" id="ECC-KI-HYc"/>
                         <outlet property="modelSegmentedSwitch" destination="NH0-hf-6nM" id="hyF-8T-bVI"/>
                         <outlet property="nameDropdownButton" destination="tqD-Kh-krn" id="z9q-xf-V7M"/>
                         <outlet property="predictionLabel" destination="8WZ-3D-wJH" id="nJ4-oC-lOy"/>
@@ -133,21 +126,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="112.21374045801527" y="-2.1126760563380285"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="sxq-GZ-7hI">
-            <objects>
-                <viewController id="gmK-a5-Y6g" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="dBt-hl-TYh">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="Vn4-lS-8GH"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="s3b-Zy-5Nh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1077" y="-2"/>
         </scene>
     </scenes>
     <resources>
