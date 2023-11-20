@@ -15,6 +15,13 @@ import Foundation
 
 class ViewController: UIViewController, URLSessionDelegate {
     
+    struct AudioConstants {
+        static let AUDIO_BUFFER_SIZE = 22050
+    }
+    
+    // setup audio model
+    let audio = AudioModel(buffer_size: AudioConstants.AUDIO_BUFFER_SIZE)
+    
     // MARK: Class Properties
     lazy var session: URLSession = {
         let sessionConfig = URLSessionConfiguration.ephemeral
