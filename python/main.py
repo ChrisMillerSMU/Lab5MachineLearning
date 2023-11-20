@@ -28,7 +28,7 @@ import torchaudio.transforms as T
 # Standard library imports
 import joblib  # To save and load Scikit-Learn models
 import os
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict, Union, Any
 
 """
 =========================================================
@@ -53,7 +53,7 @@ label_encoder = LabelEncoder()
 one_hot_encoder = OneHotEncoder(sparse_output=False)
 
 # Fit the label encoder and one-hot encoder with the known labels
-known_labels = np.array(["Reece", "Ethan", "Rafe"])
+known_labels = np.array(["Ethan", "Rafe", "Reece"])
 label_encoder.fit(known_labels)
 one_hot_encoder.fit(known_labels.reshape(-1, 1))
 
@@ -72,19 +72,10 @@ class MelSpectrogramCNN(nn.Module):
         self.fc1 = nn.Linear(self.fc_input_size, 500)
         self.fc2 = nn.Linear(500, 3)  # 3 classes
 
-    def _get_conv_output(self, n_mels, n_frames):
-        # Temporary tensor to calculate the size
-        temp_input = torch.autograd.Variable(torch.rand(1, 1, n_mels, n_frames))
-        temp_output = self.pool(F.relu(self.conv1(temp_input)))
-        temp_output = self.pool(F.relu(self.conv2(temp_output)))
-        # Flatten the output to get the total number of features
-        return int(np.prod(temp_output.size()[1:]))
-
     def forward(self, x):
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         # Print the size here to debug
-        print(x.size())
         flat_size = x.size(1) * x.size(2) * x.size(3) # Correctly calculate the flattened size
         x = x.view(-1, flat_size)  # Flatten the tensor
         x = F.relu(self.fc1(x))
@@ -123,7 +114,9 @@ def load_machine_learning_models():
     }
 
 # `model_dictionary` is a global dictionary to store machine learning models
-model_dictionary: Dict[str, Any] = load_machine_learning_models() 
+model_dictionary: Dict[str, Union[LogisticRegression, nn.Module]] = (
+    load_machine_learning_models()
+)
 
 """
 =========================================================
@@ -346,12 +339,11 @@ def retrain_logistic_regression_model(
     """
     Retrain the Logistic Regression model using the provided features and labels.
     """
-    model = model_dictionary["Logistic Regression"]
+    model: LogisticRegression = model_dictionary["Logistic Regression"]
     model.fit(features, labels)
 
     # Evaluate training accuracy
     accuracy = 100 * model.score(features, labels)
-
 
     return model, accuracy
 
@@ -400,7 +392,7 @@ async def retrain_pytorch_model(
     """
     Retrain the specified model using the provided features and labels.
     """
-    model = model_dictionary["Spectrogram CNN"]
+    model: nn.Module = model_dictionary["Spectrogram CNN"]
 
     # Define a simple dataset and dataloader
     dataset = TensorDataset(features, labels)
