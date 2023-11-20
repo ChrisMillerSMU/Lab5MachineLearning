@@ -140,8 +140,8 @@ class ResubAccuracyResponse(BaseModel):
     resub_accuracy: str
 
 class ModelAccuraciesResponse(BaseModel):
-    spectrogram_cnn_accuracy: float
-    logistic_regression_accuracy: float
+    spectrogram_cnn_accuracy: str 
+    logistic_regression_accuracy: str
 
 """
 =========================================================
@@ -459,7 +459,7 @@ async def calculate_logistic_regression_accuracy() -> str:
     cursor = db.labeledinstances.find({"model_type": "Logistic Regression"})
     data_points = await cursor.to_list(length=None)
     if len(data_points) == 0:
-        return "unknown"
+        return "--.-"
     features, labels = convert_to_numpy_dataset(data_points)
     model = model_dictionary["Logistic Regression"]
     accuracy = model.score(features, labels) * 100  # Accuracy as a percentage
@@ -473,7 +473,7 @@ async def calculate_spectrogram_cnn_accuracy() -> str:
     cursor = db.labeledinstances.find({"model_type": "Spectrogram CNN"})
     data_points = await cursor.to_list(length=None)
     if len(data_points) == 0:
-        return "unknown"
+        return "--.-"
     features, labels = convert_to_pytorch_dataset(data_points)
     model = model_dictionary["Spectrogram CNN"]
     
