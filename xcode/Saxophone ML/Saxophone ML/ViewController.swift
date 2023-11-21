@@ -6,10 +6,11 @@
 //
 
 import UIKit
-
 class ViewController: UIViewController {
     
-    
+    struct AudioConstants{
+        static let AUDIO_BUFFER_SIZE = 1024*4
+    }
     @IBOutlet weak var modelSegmentedSwitch: UISegmentedControl!
     
     @IBOutlet weak var trainingLabel: UILabel!
@@ -24,7 +25,9 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var evaluateModelsButton: UIButton!
     
+    @IBOutlet weak var recordButton: UIButton!
     // Model to retain stopwatch time for train button
+    @IBOutlet weak var playButton: UIButton!
     lazy var trainTimer: TimerModel = {
         return TimerModel()
     }()
@@ -33,12 +36,14 @@ class ViewController: UIViewController {
     lazy var testTimer: TimerModel = {
         return TimerModel()
     }()
-    
+    var audioManager: Novocaine!
+    var audioModel = AudioModel(buffer_size: AudioConstants.AUDIO_BUFFER_SIZE)
+    var isRecording = false
+    var audioData = NSMutableData()
     var timer: Timer?
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        audioManager = Novocaine.audioManager()
         // Do any additional setup after loading the view.
         setupPopUpButton()
     }
@@ -47,6 +52,21 @@ class ViewController: UIViewController {
         print("switched")
     }
     
+    @IBAction func recordButtonPressed(_ sender: UIButton) {
+            if !audioModel.isRecording {
+                // Start recording
+                audioModel.startMicrophoneProcessing(withFps: 20.0) // Example FPS
+                audioModel.play()
+                sender.setTitle("Stop Recording", for: .normal)
+            } else {
+                // Stop recording
+                audioModel.pause()
+                sender.setTitle("Record", for: .normal)
+            }
+        }
+    @IBAction func playButtonPressed(_ sender: UIButton) {
+        audioModel.startPlayback()
+    }
     @IBAction func trainButtonPressed(_ sender: UIButton) {
         self.testButton.isEnabled = false
         self.trainButton.isEnabled = false
@@ -68,6 +88,8 @@ class ViewController: UIViewController {
         self.timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
             self.updateTimer(button:self.trainButton, stopwatch:self.trainTimer)
         }
+        recordInput()
+        
         
     }
     
@@ -93,6 +115,7 @@ class ViewController: UIViewController {
         self.timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
             self.updateTimer(button:self.testButton, stopwatch:self.testTimer)
         }
+        recordInput()
     }
     
     func updateTimer(button:UIButton, stopwatch:TimerModel){
@@ -118,6 +141,16 @@ class ViewController: UIViewController {
             self.stopRecord(button:button)
         }
     }
+    func preparePlayback() {
+        // Convert NSMutableData to a Float array for playback
+    }
+
+    func playRecordedAudio() {
+        // Start playing the audio
+        preparePlayback()
+        audioManager.play()
+    }
+
     
     func recordInput() {
         //code to record audio data
@@ -128,7 +161,8 @@ class ViewController: UIViewController {
         //code to send off data
         
         
-        
+        audioManager.pause()
+        isRecording = false
         self.timer?.invalidate()
         self.timer = nil
         self.testButton.isEnabled = true
