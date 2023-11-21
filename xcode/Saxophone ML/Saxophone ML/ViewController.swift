@@ -57,11 +57,9 @@ class ViewController: UIViewController {
                 // Start recording
                 audioModel.startMicrophoneProcessing(withFps: 20.0) // Example FPS
                 audioModel.play()
-                sender.setTitle("Stop Recording", for: .normal)
             } else {
                 // Stop recording
                 audioModel.pause()
-                sender.setTitle("Record", for: .normal)
             }
         }
     @IBAction func playButtonPressed(_ sender: UIButton) {
