@@ -9,11 +9,11 @@
 /* Begin PBXBuildFile section */
 		AAD3C0A32B096D16007BE37F /* TimerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD3C0A22B096D16007BE37F /* TimerModel.swift */; };
 		AAD3C0A92B0AE588007BE37F /* EvaluationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD3C0A82B0AE588007BE37F /* EvaluationModel.swift */; };
-		AAD3C0C22B0BE81A007BE37F /* FFTHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD3C0BA2B0BE81A007BE37F /* FFTHelper.m */; };
-		AAD3C0C32B0BE81A007BE37F /* CircularBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD3C0BB2B0BE81A007BE37F /* CircularBuffer.m */; };
-		AAD3C0C42B0BE81A007BE37F /* AudioFileReader.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD3C0C02B0BE81A007BE37F /* AudioFileReader.m */; };
-		AAD3C0C52B0BE81A007BE37F /* Novocaine.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD3C0C12B0BE81A007BE37F /* Novocaine.m */; };
-		AAD3C0C72B0BE89F007BE37F /* AudioModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD3C0C62B0BE89F007BE37F /* AudioModel.swift */; };
+		AAF641F22B0D1B1700D7E4A4 /* AudioFileReader.m in Sources */ = {isa = PBXBuildFile; fileRef = AAF641F12B0D1B1700D7E4A4 /* AudioFileReader.m */; };
+		AAF641F52B0D1B6700D7E4A4 /* CircularBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = AAF641F42B0D1B6700D7E4A4 /* CircularBuffer.m */; };
+		AAF641F82B0D1BB500D7E4A4 /* FFTHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AAF641F72B0D1BB500D7E4A4 /* FFTHelper.m */; };
+		AAF641FB2B0D1BF800D7E4A4 /* Novocaine.m in Sources */ = {isa = PBXBuildFile; fileRef = AAF641FA2B0D1BF800D7E4A4 /* Novocaine.m */; };
+		AAF641FE2B0D1C3700D7E4A4 /* AudioModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAF641FD2B0D1C3700D7E4A4 /* AudioModel.swift */; };
 		C07558752B057794001414B7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07558742B057794001414B7 /* AppDelegate.swift */; };
 		C07558772B057794001414B7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07558762B057794001414B7 /* SceneDelegate.swift */; };
 		C07558792B057794001414B7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07558782B057794001414B7 /* ViewController.swift */; };
@@ -26,15 +26,15 @@
 		AAD3C0A22B096D16007BE37F /* TimerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerModel.swift; sourceTree = "<group>"; };
 		AAD3C0A82B0AE588007BE37F /* EvaluationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluationModel.swift; sourceTree = "<group>"; };
 		AAD3C0B92B0BE819007BE37F /* Saxophone ML-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Saxophone ML-Bridging-Header.h"; sourceTree = "<group>"; };
-		AAD3C0BA2B0BE81A007BE37F /* FFTHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FFTHelper.m; path = "../../../../AudioFiltering-FFT-DopplerShifts/AudioDSPUtils/FFTHelper.m"; sourceTree = "<group>"; };
-		AAD3C0BB2B0BE81A007BE37F /* CircularBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CircularBuffer.m; path = "../../../../AudioFiltering-FFT-DopplerShifts/AudioDSPUtils/CircularBuffer.m"; sourceTree = "<group>"; };
-		AAD3C0BC2B0BE81A007BE37F /* FFTHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FFTHelper.h; path = "../../../../AudioFiltering-FFT-DopplerShifts/AudioDSPUtils/FFTHelper.h"; sourceTree = "<group>"; };
-		AAD3C0BD2B0BE81A007BE37F /* Novocaine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Novocaine.h; path = "../../../../AudioFiltering-FFT-DopplerShifts/AudioDSPUtils/Novocaine.h"; sourceTree = "<group>"; };
-		AAD3C0BE2B0BE81A007BE37F /* AudioFileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioFileReader.h; path = "../../../../AudioFiltering-FFT-DopplerShifts/AudioDSPUtils/AudioFileReader.h"; sourceTree = "<group>"; };
-		AAD3C0BF2B0BE81A007BE37F /* CircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CircularBuffer.h; path = "../../../../AudioFiltering-FFT-DopplerShifts/AudioDSPUtils/CircularBuffer.h"; sourceTree = "<group>"; };
-		AAD3C0C02B0BE81A007BE37F /* AudioFileReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AudioFileReader.m; path = "../../../../AudioFiltering-FFT-DopplerShifts/AudioDSPUtils/AudioFileReader.m"; sourceTree = "<group>"; };
-		AAD3C0C12B0BE81A007BE37F /* Novocaine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Novocaine.m; path = "../../../../AudioFiltering-FFT-DopplerShifts/AudioDSPUtils/Novocaine.m"; sourceTree = "<group>"; };
-		AAD3C0C62B0BE89F007BE37F /* AudioModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AudioModel.swift; path = "../../../../AudioFiltering-FFT-DopplerShifts/AudioLabSwift/AudioModel.swift"; sourceTree = "<group>"; };
+		AAF641F02B0D1AE900D7E4A4 /* AudioFileReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioFileReader.h; sourceTree = "<group>"; };
+		AAF641F12B0D1B1700D7E4A4 /* AudioFileReader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioFileReader.m; sourceTree = "<group>"; };
+		AAF641F32B0D1B4500D7E4A4 /* CircularBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CircularBuffer.h; sourceTree = "<group>"; };
+		AAF641F42B0D1B6700D7E4A4 /* CircularBuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CircularBuffer.m; sourceTree = "<group>"; };
+		AAF641F62B0D1B8B00D7E4A4 /* FFTHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFTHelper.h; sourceTree = "<group>"; };
+		AAF641F72B0D1BB500D7E4A4 /* FFTHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFTHelper.m; sourceTree = "<group>"; };
+		AAF641FA2B0D1BF800D7E4A4 /* Novocaine.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Novocaine.m; sourceTree = "<group>"; };
+		AAF641FC2B0D1C1100D7E4A4 /* Novocaine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Novocaine.h; sourceTree = "<group>"; };
+		AAF641FD2B0D1C3700D7E4A4 /* AudioModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioModel.swift; sourceTree = "<group>"; };
 		C07558712B057794001414B7 /* Saxophone ML.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Saxophone ML.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C07558742B057794001414B7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C07558762B057794001414B7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -75,15 +75,7 @@
 		C07558732B057794001414B7 /* Saxophone ML */ = {
 			isa = PBXGroup;
 			children = (
-				AAD3C0BE2B0BE81A007BE37F /* AudioFileReader.h */,
-				AAD3C0C02B0BE81A007BE37F /* AudioFileReader.m */,
-				AAD3C0BF2B0BE81A007BE37F /* CircularBuffer.h */,
-				AAD3C0BB2B0BE81A007BE37F /* CircularBuffer.m */,
-				AAD3C0BC2B0BE81A007BE37F /* FFTHelper.h */,
-				AAD3C0BA2B0BE81A007BE37F /* FFTHelper.m */,
-				AAD3C0BD2B0BE81A007BE37F /* Novocaine.h */,
-				AAD3C0C12B0BE81A007BE37F /* Novocaine.m */,
-				AAD3C0C62B0BE89F007BE37F /* AudioModel.swift */,
+				AAF641FD2B0D1C3700D7E4A4 /* AudioModel.swift */,
 				AAD3C0A82B0AE588007BE37F /* EvaluationModel.swift */,
 				AAD3C0A22B096D16007BE37F /* TimerModel.swift */,
 				C07558742B057794001414B7 /* AppDelegate.swift */,
@@ -94,6 +86,14 @@
 				C075587F2B057795001414B7 /* LaunchScreen.storyboard */,
 				C07558822B057795001414B7 /* Info.plist */,
 				AAD3C0B92B0BE819007BE37F /* Saxophone ML-Bridging-Header.h */,
+				AAF641F02B0D1AE900D7E4A4 /* AudioFileReader.h */,
+				AAF641F12B0D1B1700D7E4A4 /* AudioFileReader.m */,
+				AAF641F32B0D1B4500D7E4A4 /* CircularBuffer.h */,
+				AAF641F42B0D1B6700D7E4A4 /* CircularBuffer.m */,
+				AAF641F62B0D1B8B00D7E4A4 /* FFTHelper.h */,
+				AAF641F72B0D1BB500D7E4A4 /* FFTHelper.m */,
+				AAF641FC2B0D1C1100D7E4A4 /* Novocaine.h */,
+				AAF641FA2B0D1BF800D7E4A4 /* Novocaine.m */,
 			);
 			path = "Saxophone ML";
 			sourceTree = "<group>";
@@ -170,16 +170,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AAF641FE2B0D1C3700D7E4A4 /* AudioModel.swift in Sources */,
+				AAF641F82B0D1BB500D7E4A4 /* FFTHelper.m in Sources */,
 				C07558792B057794001414B7 /* ViewController.swift in Sources */,
-				AAD3C0C42B0BE81A007BE37F /* AudioFileReader.m in Sources */,
 				AAD3C0A32B096D16007BE37F /* TimerModel.swift in Sources */,
-				AAD3C0C32B0BE81A007BE37F /* CircularBuffer.m in Sources */,
-				AAD3C0C72B0BE89F007BE37F /* AudioModel.swift in Sources */,
-				AAD3C0C22B0BE81A007BE37F /* FFTHelper.m in Sources */,
 				C07558752B057794001414B7 /* AppDelegate.swift in Sources */,
 				C07558772B057794001414B7 /* SceneDelegate.swift in Sources */,
+				AAF641F22B0D1B1700D7E4A4 /* AudioFileReader.m in Sources */,
 				AAD3C0A92B0AE588007BE37F /* EvaluationModel.swift in Sources */,
-				AAD3C0C52B0BE81A007BE37F /* Novocaine.m in Sources */,
+				AAF641F52B0D1B6700D7E4A4 /* CircularBuffer.m in Sources */,
+				AAF641FB2B0D1BF800D7E4A4 /* Novocaine.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
